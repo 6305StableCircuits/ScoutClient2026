@@ -1,0 +1,47 @@
+{
+    "name": "scoutclient2026",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "dev": "vite dev",
+        "build": "vite build",
+        "preview": "vite preview",
+        "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+        "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+        "format": "prettier --write .",
+        "lint": "prettier --check ."
+    },
+    "devDependencies": {
+        "@sveltejs/adapter-auto": "^7.0.0",
+        "@sveltejs/kit": "^2.50.2",
+        "@sveltejs/vite-plugin-svelte": "^6.2.4",
+        "@vincjo/datatables": "^2.8.0",
+        "autoprefixer": "^10.4.24",
+        "bits-ui": "^1.8.0",
+        "clsx": "^2.1.1",
+        "prettier": "^3.8.1",
+        "prettier-plugin-svelte": "^3.4.1",
+        "svelte": "^5.49.2",
+        "svelte-check": "^4.3.6",
+        "tailwind-merge": "^2.6.1",
+        "tailwind-variants": "^0.3.1",
+        "tailwindcss": "^4.1.18",
+        "tailwindcss-animate": "^1.0.7",
+        "typescript": "^5.9.3",
+        "vite": "^7.3.1"
+    },
+    "type": "module",
+    "dependencies": {
+        "@fontsource/inter": "^5.2.8",
+        "@supabase/supabase-js": "^2.94.1",
+        "@svelte-put/clickoutside": "^4.0.0",
+        "@sveltejs/enhanced-img": "^0.8.5",
+        "dotenv": "^16.6.1",
+        "esm-env": "^1.2.2",
+        "statuses": "^2.0.2",
+        "svelte-headlessui": "^0.0.45",
+        "svelte-persisted-store": "^0.12.0",
+        "svelte-transition": "^0.0.17",
+        "valibot": "^1.2.0"
+    }
+}
