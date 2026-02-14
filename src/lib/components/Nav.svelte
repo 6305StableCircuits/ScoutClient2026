@@ -20,7 +20,7 @@
 <main
     class="justify-between flex max-h-16 px-10 content-center text-center px-10 m-auto bg-gray-800 w-[100.475vw] ml-[-10px]"
 >
-    <h1 class="text-[2em] pt-2">ScoutClient {frc_year}</h1>
+    <h1 class="text-[2em] pt-2 text-nowrap">ScoutClient {frc_year}</h1>
     <span
         class="landscape flex justify-between content-center text-center px-10 w-[75vw]"
         bind:this={landscape}
