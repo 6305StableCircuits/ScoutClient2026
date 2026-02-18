@@ -13,7 +13,7 @@
         pretty = false,
         children
     }: Props = $props();
-    let entries = $derived(Object.entries(object));
+    const entries = $derived(Object.entries(object));
     function prettify(name: string): string {
         return name
             .replace(/[A-Z]/g, (m: string) => ` ${m}`)

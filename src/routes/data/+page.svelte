@@ -9,7 +9,7 @@
     import { Datatable } from '@vincjo/datatables';
     import { ThSort } from '@vincjo/datatables';
     import { matches } from './db.remote';
-    let { data }: PageProps = $props();
+    const { data }: PageProps = $props();
     let background = 'rgb(0,0,0)';
     let foreground = 'rgb(255,255,255)';
     let datata = [

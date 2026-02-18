@@ -5,7 +5,7 @@
     import Graph from '$lib/components/Graph.svelte';
     import { uppercase, coerce, de_nan, get_average_score, frc_year } from '$lib';
     import Match from '$lib/Match.svelte';
-    let { data }: PageProps = $props();
+    const { data }: PageProps = $props();
     let td = $state({
         number: data.number,
         avg: {
@@ -28,7 +28,7 @@
     let graph_data = $state(format_for_graph(td.matches));
     console.log(graph_data);
     let team_img = $state<HTMLImageElement>();
-    let notes = $derived(data.matches.map((match: Match) => [match.match, match.notes]));
+    const notes = $derived(data.matches.map((match: Match) => [match.match, match.notes]));
     function fallback(img: HTMLImageElement) {
         $effect(() => {
             const on_error = () => {

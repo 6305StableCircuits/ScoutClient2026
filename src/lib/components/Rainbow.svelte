@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Props } from '$lib/types';
-    let { children }: Props = $props();
+    const { children }: Props = $props();
 </script>
 
 <!--

@@ -4,9 +4,9 @@
     import Match from '$lib/Match.svelte';
     import { frc_year } from '$lib';
 
-    let { data }: PageProps = $props();
+    const { data }: PageProps = $props();
 
-    let scores = $derived({
+    const scores = $derived({
         blue: data.matches
             .filter((match: Match) => match.alliance === 'blue')
             .map((match: Match) => match.score.overall)
@@ -17,7 +17,7 @@
             .reduce((a: number, b: number) => a + b, 0)
     });
 
-    let teams = $derived({
+    const teams = $derived({
         blue: data.matches.filter((match: Match) => match.alliance === 'blue'),
         red: data.matches.filter((match: Match) => match.alliance === 'red')
     });

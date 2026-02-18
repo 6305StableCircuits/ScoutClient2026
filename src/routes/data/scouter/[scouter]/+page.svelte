@@ -11,16 +11,16 @@
         const results = keys.sort((a, b) => values[keys.indexOf(b)] - values[keys.indexOf(a)]);
         return results;
     }
-    let preferred = $derived.by<Match['alliance']>(() => {
+    const preferred = $derived.by<Match['alliance']>(() => {
         const blue = scouted.filter(match => match.alliance === 'blue').length;
         const red = scouted.filter(match => match.alliance === 'red').length;
         return blue > red ? 'blue' : 'red';
     });
-    let teams = $derived.by<number[]>(() => {
+    const teams = $derived.by<number[]>(() => {
         let arr = scouted.map(match => match.team);
         return [...new Set<number>(arr)];
     });
-    let rank = $derived(rank_scouters(data.matches).indexOf(data.scouter) + 1);
+    const rank = $derived(rank_scouters(data.matches).indexOf(data.scouter) + 1);
 </script>
 
 <svelte:head>

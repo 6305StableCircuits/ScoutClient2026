@@ -1,6 +1,6 @@
 <script>
-    let { stuff = '', length = 19, max_width = 200 } = $props();
-    let preview = $derived((stuff ?? '').slice(0, length) + '...');
+    const { stuff = '', length = 19, max_width = 200 } = $props();
+    const preview = $derived((stuff ?? '').slice(0, length) + '...');
     let expanded = $state(false);
 </script>
 

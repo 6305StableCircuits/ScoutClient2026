@@ -1,4 +1,5 @@
 import { onMount } from 'svelte';
+
 onMount(() => {
     return () => {
         for (const timeout of timeouts) {
@@ -7,7 +8,9 @@ onMount(() => {
         timeouts = [];
     }
 });
+
 let timeouts: number[] = [];
+
 export function timeout<T extends (...args: any[]) => any | void>(
     fn: T,
     delay: number = 0,

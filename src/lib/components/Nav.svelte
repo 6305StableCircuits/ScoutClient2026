@@ -1,11 +1,8 @@
 <script lang="ts">
     import { frc_year, uppercase, path_entries, is_current_path } from '$lib';
     import { page } from '$app/state';
-    import Button from '$lib/components/Button.svelte';
     import NavMenu from '$lib/components/NavMenu.svelte';
     import Link from '$lib/components/Link.svelte';
-    let portrait = $state<HTMLSpanElement>();
-    let landscape = $state<HTMLSpanElement>();
     //     type $state<T> = T;
     // onMount(()=>{
     //     let landScapeStyle = getComputedStyle(landscape!);
@@ -23,7 +20,6 @@
     <h1 class="text-[2em] pt-2 text-nowrap">ScoutClient {frc_year}</h1>
     <span
         class="landscape flex justify-between content-center text-center px-10 w-[75vw]"
-        bind:this={landscape}
     >
         {#key page.url.pathname}
             {#each path_entries as [title, path]}
@@ -45,7 +41,7 @@
             >
         {/key}
     </span>
-    <span class="portrait" bind:this={portrait}>
+    <span class="portrait">
         <div class="float-right flex absolute right-[5%] pt-3 pointer z-50">
             <Link url="/settings" class="float-left pt-1 pb-0"
                 ><enhanced:img
