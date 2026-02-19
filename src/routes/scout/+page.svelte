@@ -72,7 +72,7 @@
     // warning ts gets very angry here, `coerce` comes in handy
     let misses = Object.fromEntries(Config.scoring.map((score: any) => [score.name, 0]));
     let match_score = $derived($current_match.score);
-    let leave = $state(false);
+    let climb1 = $state(false);
     let end = $state(Object.fromEntries(Config.end.map(({ name }) => [name, false])));
     let red = $state($alliance_score === 'red');
     let alliance = $derived<Match['alliance']>(red ? 'red' : 'blue');
@@ -142,7 +142,7 @@
         ending_stuff = Array(Config.end.length).fill(false);
         scoring_stuff = Array(Config.scoring.length).fill({ amount: 0, points: 0 });
         misses = Object.fromEntries(Config.scoring.map((score: any) => [score.name, 0]));
-        leave = false;
+        climb1 = false;
         notes = '';
         score_bindings = Array(Config.scoring.length + 1).fill(undefined);
     }
@@ -162,7 +162,7 @@
         let end;
         ({
             points: score[part],
-            leave: $current_match.score.auto.leave,
+            climb1: $current_match.score.auto.climb1,
             end,
             scoring,
             assists
@@ -176,11 +176,11 @@
     }
     function score_score<
         N extends keyof (typeof Config)[T],
-        T extends 'scoring' | 'end' | 'leave' = 'scoring'
+        T extends 'scoring' | 'end' | 'climb1' = 'scoring'
     >(index: N, type?: T) {
-        if (type === 'leave') {
+        if (type === 'climb1') {
             return function () {
-                const state = Config.leave.score(Config.leave.points);
+                const state = Config.climb1.score(Config.climb1.points);
                 set_stuff_i_really_dont_wanna_deal_with_right_now_insert_name_here(state);
                 return state;
             };
@@ -375,7 +375,7 @@
                                     () => (score_bindings[i] ??= subsets[0].index),
                                     v => (score_bindings[i] = v)
                                 }
-                                class="override-select px-0 mx-0"
+                                class="override-select"
                             >
                                 {#each subsets as { name, index }}
                                     <option class="bg-[#135fef]" value={index}>{name}</option>
@@ -385,47 +385,21 @@
                     {/if}
                     <br /><br />
                 {/each}
-
-                {@const last = score_bindings.length - 1}
-                {#each Object.entries(score_names) as [name, subsets], i}
-                    <Button
-                        class={button_class}
-                        onclick={function (e) {
-                            if (e.target === this) miss(scoring_names[score_bindings.at(-1)!]);
-                        }}
-                    >
-                        Miss {pretty(name)}
-                        <select
-                            class="override-select"
-                            style="width: 100%"
-                            bind:value={
-                                () => (score_bindings[i] ??= subsets[0].index),
-                                v => (score_bindings[i] = v)
-                            }
-                        >
-                            {#each subsets as { name, index }}
-                                <option value={index}>{pretty(name)}</option>
-                            {/each}
-                        </select>
-                    </Button>
-                {/each}
+            {#if game_state === 'auto'}
                 <Button
-                    onclick={() => update_score(Config.assist)}
-                    class={button_class}>Assist</Button
+                    disabled={climb1}
+                    onclick={score_score('points', 'climb1')}
+                    class={button_class}>Climb Level 1 (Auto)</Button
                 >
-                {#if game_state === 'auto'}
-                    <Button
-                        disabled={leave}
-                        onclick={score_score('points', 'leave')}
-                        class={button_class}>Leave</Button
-                    >
-                {:else}
+
+            {/if}
+            {#if game_state === 'teleop'}
                     {#each ending_stuff, i}
                         <Button
                             disabled={ending_stuff[i]}
                             onclick={create_end_handler(i)}
                             class={button_class}>{uppercase(Config.end[i].name)}</Button
-                        >
+                            >
                         {#if i % 2}
                             <br /><br />
                         {/if}
