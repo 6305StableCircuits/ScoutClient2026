@@ -3,7 +3,7 @@
         x: number;
         y: number;
     };
-    let {
+    const {
         data,
         width = 300,
         height = 150,
@@ -17,17 +17,17 @@
         height?: number;
         spacing?: Point;
     } = $props();
-    let xPoints = $state(spacing.x);
-    let yPoints = $state(spacing.y);
-    let minX = $derived(Math.min(...data.map(({ x }) => x)));
-    let maxX = $derived(Math.max(...data.map(({ x }) => x)));
-    let minY = $derived(Math.min(...data.map(({ y }) => y)));
-    let maxY = $derived(Math.max(...data.map(({ y }) => y)));
-    let points = $derived(
+    let x_points = $state(spacing.x);
+    let y_points = $state(spacing.y);
+    const min_x = $derived(Math.min(...data.map(({ x }) => x)));
+    const max_x = $derived(Math.max(...data.map(({ x }) => x)));
+    const min_y = $derived(Math.min(...data.map(({ y }) => y)));
+    const max_y = $derived(Math.max(...data.map(({ y }) => y)));
+    const points = $derived(
         merge_array(
             data.map(({ x, y }) => [
-                (x * (width + 13.5)) / (maxX - minX) + 1.5,
-                height - (y * height) / (maxY - minY) - 1.5
+                (x * (width + 13.5)) / (max_x - min_x) + 1.5,
+                height - (y * height) / (max_y - min_y) - 1.5
             ])
         )
     );
@@ -58,17 +58,17 @@
         return a;
     }
 
-    function generate_array(startValue: number, stopValue: number, cardinality: number): number[] {
+    function generate_array(start: number, stop: number, cardinality: number): number[] {
         var arr = [];
-        var step = (stopValue - startValue) / (cardinality - 1);
+        var step = (stop - start) / (cardinality - 1);
         for (var i = 0; i < cardinality; i++) {
-            arr.push(startValue + step * i);
+            arr.push(start + step * i);
         }
-        return arr.map((e) => Math.round(e * 10) / 10);
+        return arr.map(e => Math.round(e * 10) / 10);
     }
 
-    let divideY = $derived(generate_array(minY, maxY, yPoints));
-    let divideX = $derived(generate_array(minX, maxX, xPoints));
+    const divide_y = $derived(generate_array(min_y, max_y, y_points));
+    const divide_x = $derived(generate_array(min_x, max_x, x_points));
 </script>
 
 <div>
@@ -76,21 +76,21 @@
         width={width + 15}
         {height}
         style:padding-top={15}
-        style:--minor-length="calc(100% / {maxX + 15})"
-        style:--major-length="calc(1000% / {maxX + 15})"
-        style:--minor-height="calc(100% / {maxY + 15})"
-        style:--major-height="calc(1000% / {maxY + 15})"
+        style:--minor-length="calc(100% / {max_x + 15})"
+        style:--major-length="calc(1000% / {max_x + 15})"
+        style:--minor-height="calc(100% / {max_y + 15})"
+        style:--major-height="calc(1000% / {max_y + 15})"
     >
         <line x1="0" x2={width + 15} y1={height} y2={height}></line>
         <g class="x" transform="translate(0,{height + 20})">
-            {#each divideX as x, i}
-                <text x={(x * width) / (maxX - minX)}>{x}</text>
+            {#each divide_x as x, i}
+                <text x={(x * width) / (max_x - min_x)}>{x}</text>
             {/each}
         </g>
         <line x1="0" x2="0" y1="-15" y2={height}></line>
         <g class="y" transform="translate(-10,0)">
-            {#each divideY as y, i}
-                <text y={height - (y * height) / (maxY - minY)}>{y}</text>
+            {#each divide_y as y, i}
+                <text y={height - (y * height) / (max_y - min_y)}>{y}</text>
             {/each}
         </g>
         {#each points as [[x1, y1], [x2, y2]], i}

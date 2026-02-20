@@ -10,7 +10,7 @@
         class?: string;
         [x: string]: any;
     }
-    let {
+    const {
         children,
         width = 20,
         text_size: text_size = '2xl',

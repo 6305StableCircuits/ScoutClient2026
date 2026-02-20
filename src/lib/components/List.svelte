@@ -9,9 +9,9 @@
         head?: Snippet;
         table?: boolean;
     }
-    let { list = [], length = 10, item, head, table = false }: Props<any> = $props();
+    const { list = [], length = 10, item, head, table = false }: Props<any> = $props();
     let page = $state(0);
-    let parts = $derived(split_parts(list, length));
+    const parts = $derived(split_parts(list, length));
     $inspect(parts[page]);
     function decrement() {
         if (page - 1 in parts) {
@@ -23,12 +23,12 @@
             page++;
         }
     }
-    let headTag = $state('span');
-    let mainTag = $state('span');
+    let head_tag = $state('span');
+    let main_tag = $state('span');
     //eval('$$anchor')?.tagName === "TABLE"
     if (table) {
-        headTag = 'thead';
-        mainTag = 'table';
+        head_tag = 'thead';
+        main_tag = 'table';
     }
 </script>
 
@@ -36,11 +36,11 @@
     <Button onclick={decrement}>🞀</Button>&nbsp;
     {page}&nbsp;<Button onclick={increment}>🞂</Button>
 </span><br />
-<svelte:element this={mainTag}>
-    <svelte:element this={headTag}>
+<svelte:element this={main_tag}>
+    <svelte:element this={head_tag}>
         {@render head?.()}
     </svelte:element>
-    <svelte:element this={headTag ? 'tbody' : 'span'}>
+    <svelte:element this={head_tag ? 'tbody' : 'span'}>
         {#each parts[page] as part, i}
             {@render item?.(part, i)}
         {/each}
