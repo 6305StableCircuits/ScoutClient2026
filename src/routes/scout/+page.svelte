@@ -103,7 +103,7 @@
         ({ undo_available, redo_available } = Config);
     });
     // $inspect(match_score);
-    let game_state = $state<'pre' | 'auto' | 'teleop' | 'post'>('pre');
+    let game_state = $state< 'pre' | 'auto' | 'teleop' | 'shift1' | 'shift2' | 'shift3' | 'post'>('pre');
     $inspect($current_match);
     $inspect(ending_stuff);
     let wake_lock: WakeLockSentinel | null = null;
@@ -115,16 +115,16 @@
             } catch {}
         }
         $current_match.date = Date.now();
-        timer = new Timer(DEV ? '0:30' : '2:30');
+        timer = new Timer(false ? '0:20' : '2:20');
         timer.start();
         $started_current_match = true;
         game_state = 'auto';
-        timer.on('2:15', () => {
+        timer.on('2:20', () => {
             timer!.pause();
             setTimeout(() => {
                 timer!.play();
                 game_state = 'teleop';
-            }, 3000);
+            }, 2000);
         });
         timer.on('finish', () => {
             game_state = 'post';
@@ -361,7 +361,8 @@
                 {#each Object.entries(score_names) as [name, subsets], i}
                     {#if subsets.length === 1}
                         <Button onclick={score_score(subsets[0].index)}
-                            >{pretty(name + '(' + subsets[0].name + ')')} Score</Button
+                        class={button_class}
+                            >{pretty(subsets[0].name)}Fuel +</Button
                         >
                     {:else}
                         <Button

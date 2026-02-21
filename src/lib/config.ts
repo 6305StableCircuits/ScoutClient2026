@@ -112,6 +112,24 @@ var config: Config = {
     
     end: [
         {
+            name: 'Climb Level 1',
+            points: 10,
+            score(points: number) {
+                if (game_state === 'auto') {
+                    game_state = 'teleop';
+                    for (const score of scoring) {
+                        state.scoring[score] = {
+                            amount: 0,
+                            points: 0
+                        };
+                    }
+                }
+                state.end['Climb Level 1'] = true;
+                state.points += points;
+                return state;
+            }
+        },
+        {
             name: 'Climb Level 2',
             points: 20,
             score(points: number) {
