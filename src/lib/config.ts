@@ -88,14 +88,14 @@ var config: Config = {
                 state.scoring['Fuel'].amount++;
                 state.scoring['Fuel'].points += points;
                 return state;
-         },
+            }
         }
     ],
     // climb
     climb1: {
         name: 'Climb Level 1 (Auto)',
         points: 15,
-        score(points: number) {
+        /*score(points: number) {
             if (game_state === 'auto') {
                 game_state = 'teleop';
                 for (const score of scoring) {
@@ -104,11 +104,18 @@ var config: Config = {
                 }
             }
             actions.push(structuredClone(state));
-            state.climb['Climb Level 1 (Auto)'] = true;
+            state.climb['climb1'] = true;
             state.points += points;
-            return state;}
+            return state;*/
+        score(points: number) {
+            actions.push(structuredClone(state));
+            state.climb1 = true;
+            state.points += points;
+            return state;
+
+        }
     
-        },
+    },
     
     end: [
         {
@@ -192,7 +199,7 @@ state = {
     assists,
     charged,
     points: 0,
-    leave: false,
+    climb1: false,
     park: false,
     end: Object.fromEntries(config.end.map(({ name }) => [name, false])),
     scoring: Object.fromEntries(

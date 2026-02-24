@@ -21,7 +21,7 @@ export declare type Score = {
     overall: number;
     auto: {
         score: number;
-        leave: boolean;
+        climb1: boolean;
         [x: typeof Config.scoring[number]['name']]: {
             amount: number;
             points: number;
@@ -88,7 +88,7 @@ export declare type Config = {
     readonly undo_available: boolean;
     readonly redo_available: boolean;
     readonly scoring: Scoring[];
-    readonly leave: Goal;
+    readonly climb1: Goal;
     readonly end: Goal[];
     readonly park: Goal;
 };

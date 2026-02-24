@@ -86,7 +86,7 @@ export function get_average_score(matches: Match[]): Score {
         overall: <any[]>[],
         auto: <Record<string, any>>{
             score: [],
-            leave: [],
+            climb1: [],
             ...Object.fromEntries(
                 Config.scoring.map(({ name }) => [
                     name,
@@ -118,7 +118,7 @@ export function get_average_score(matches: Match[]): Score {
     for (const { score } of matches) {
         res.overall.push(score.overall);
         res.auto.score.push(score.auto.score);
-        res.auto.leave.push(score.auto.leave);
+        res.auto.climb1.push(score.auto.climb1);
         for (let s of Config.scoring) {
             res.auto[coerce<Record<string, any>>(s).name].amount.push(
                 score.auto[s.name as keyof InstanceType<(typeof Match)['Scoring']>['auto']].amount
@@ -144,7 +144,7 @@ export function get_average_score(matches: Match[]): Score {
         // @ts-expect-error
         auto: {
             score: average(res.auto.score),
-            leave: average(res.auto.leave),
+            climb1: average(res.auto.climb1),
             ...Config.scoring
                 .map(({ name }) => ({
                     amount: average(res.auto[name].amount),

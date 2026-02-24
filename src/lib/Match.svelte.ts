@@ -30,7 +30,7 @@ export default class Match {
         overall: number;
         auto = $state({
             score: 0,
-            leave: false,
+            climb1: false,
             ...Config.scoring.reduce(
                 (acc, scoring) => ({
                     ...acc,
@@ -41,7 +41,7 @@ export default class Match {
                 }),
                 {}
             )
-        } as { score: number; leave: boolean } & Record<
+        } as { score: number; climb1: boolean } & Record<
             (typeof Config.scoring)[number]['name'],
             { amount: number; points: number }
         >);
