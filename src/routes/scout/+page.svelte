@@ -73,6 +73,7 @@
     let misses = Object.fromEntries(Config.scoring.map((score: any) => [score.name, 0]));
     let match_score = $derived($current_match.score);
     let climb1 = $state(false);
+    let lightyes = $state(false);
     let end = $state(Object.fromEntries(Config.end.map(({ name }) => [name, false])));
     let red = $state($alliance_score === 'red');
     let alliance = $derived<Match['alliance']>(red ? 'red' : 'blue');
@@ -124,7 +125,7 @@
             setTimeout(() => {
                 timer!.play();
                 game_state = 'teleop';
-            }, 2000);
+            }, 20000);
         });
         timer.on('finish', () => {
             game_state = 'post';
@@ -364,7 +365,7 @@
                         class={button_class}
                             >{pretty(subsets[0].name)}Fuel +</Button
                         >
-                    {:else}
+                        {:else}
                         <Button
                             onclick={function (e) {
                                 e.target === this ? score_score(score_bindings[i]!)() : null;
@@ -386,6 +387,9 @@
                     {/if}
                     <br /><br />
                 {/each}
+                
+                
+            
             {#if game_state === 'auto'}
                 <Button
                     disabled={climb1}
@@ -409,6 +413,27 @@
                 {#if game_state === 'post'}
                     <Button onclick={finish} class={button_class}><b>Next Game</b></Button>
                 {/if}
+                <p></p>
+                {#each ["Defense", "Offense"] as modes}
+	                <label>
+                    
+		            <input
+			            type="radio"
+			            name=" "
+			            value={modes}
+			
+		                />  
+
+		{ modes} 
+	</label>
+{/each}
+              
+                <label>
+                    <p></p>
+                    <input type="checkbox" bind:checked={lightyes} />
+                    Did the robot score when the hub light was inactive?
+                </label>
+
                 <h2>Notes</h2>
                 <textarea
                     class="border-white rounded w-[80%] outline-none text-black p-2"
@@ -417,6 +442,7 @@
             {/if}
         </main>
     {/if}
+    
 </main>
 
 <style>

@@ -81,6 +81,7 @@ export declare interface TimerOptions {
     };
 };
 export declare type Config = {
+
     readonly reset: () => void;
     readonly undo: () => object;
     readonly redo: () => object;
@@ -91,12 +92,14 @@ export declare type Config = {
     readonly climb1: Goal;
     readonly end: Goal[];
     readonly park: Goal;
+
 };
 type Goal = {
     readonly name: string;
     readonly points: number;
     readonly score: (points: number) => Record<string, any>;
 };
+
 type Scoring = {
     readonly name: string;
     readonly auto: {
@@ -107,3 +110,4 @@ type Scoring = {
     };
     readonly score: (points: number) => object;
 };
+
