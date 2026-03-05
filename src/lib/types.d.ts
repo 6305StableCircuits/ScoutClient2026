@@ -10,11 +10,13 @@ export declare type StyleSize = `${number}xl` | `xl` | 'lg' | 'md' | 'sm';
 export declare type Scoring = {
     name: string;
     readonly once?: boolean | 'per_phase';
-    auto: {
+    auto?: {
         points: number;
+        once?: boolean;
     };
-    teleop: {
+    teleop?: {
         points: number;
+        once?: boolean;
     };
     score: (points: number) => Record<string, any>;
 };
@@ -90,9 +92,8 @@ export declare type Config = {
     readonly undo_available: boolean;
     readonly redo_available: boolean;
     readonly scoring: Scoring[];
-    readonly climb1: Goal;
     readonly end: Goal[];
-    readonly park: Goal;
+    readonly park?: Goal;
     readonly questions: qna[];
 
 };
@@ -105,7 +106,7 @@ type Goal = {
 type qna = {
     readonly name: string;
     readonly toggle: string;
-    
+
 };
 type Scoring = {
     readonly name: string;
