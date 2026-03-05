@@ -8,6 +8,7 @@
         children?: Snippet;
     }
     let {
+        // svelte-ignore binding_property_non_reactive
         object = $bindable<{ [x: string | number]: any }>(),
         editable = false,
         pretty = false,
@@ -19,7 +20,7 @@
             .replace(/[A-Z]/g, (m: string) => ` ${m}`)
             .replace(/^[a-z]/, (m: string) => m.toUpperCase())
             .replace(/[_-]/g, ' ')
-            .replace(/ [a-z]/g, (m) => m.toUpperCase());
+            .replace(/ [a-z]/g, m => m.toUpperCase());
     }
 </script>
 
@@ -35,7 +36,15 @@
             </summary>
             {#if typeof value === 'object' && value !== null}
                 {#if value !== object}
-                    <Tree bind:object={object[name.toString()]} {editable} {pretty} />
+                    <Tree
+                        // svelte-ignore binding_property_non_reactive
+                        bind:object={
+                            // svelte-ignore binding_property_non_reactive
+                            object[name.toString()]
+                        }
+                        {editable}
+                        {pretty}
+                    />
                 {:else}
                     Circular Reference
                 {/if}

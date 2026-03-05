@@ -58,6 +58,7 @@
     const button_class = 'py-2xl h-20 w-40';
     let scoring_stuff: Array<{ amount: number; points: number }> = $state(Array(Config.scoring.length).fill({ amount: 0, points: 0 }));
     let ending_stuff: any[] = $state(Array(Config.end.length).fill(false));
+    let questionthing: any[] = $state(Array(Config.questions.length).fill(false));
     scouter; // used to shut up intellisense
     let score = $derived($current_match.score.concise);
     onMount(() => {
@@ -73,7 +74,6 @@
     let misses = Object.fromEntries(Config.scoring.map((score: any) => [score.name, 0]));
     let match_score = $derived($current_match.score);
     let climb1 = $state(false);
-    let lightyes = $state(false);
     let end = $state(Object.fromEntries(Config.end.map(({ name }) => [name, false])));
     let red = $state($alliance_score === 'red');
     let alliance = $derived<Match['alliance']>(red ? 'red' : 'blue');
@@ -104,7 +104,7 @@
         ({ undo_available, redo_available } = Config);
     });
     // $inspect(match_score);
-    let game_state = $state< 'pre' | 'auto' | 'teleop' | 'shift1' | 'shift2' | 'shift3' | 'post'>('pre');
+    let game_state = $state< 'pre' | 'auto' | 'teleop' | 'post'>('pre');
     $inspect($current_match);
     $inspect(ending_stuff);
     let wake_lock: WakeLockSentinel | null = null;
@@ -125,7 +125,7 @@
             setTimeout(() => {
                 timer!.play();
                 game_state = 'teleop';
-            }, 20000);
+            }, 10000);
         });
         timer.on('finish', () => {
             game_state = 'post';
@@ -141,6 +141,7 @@
         score;
         end = Object.fromEntries(Config.end.map(({ name }) => [name, false]));
         ending_stuff = Array(Config.end.length).fill(false);
+        questionthing = Array(Config.questions.length).fill(false);
         scoring_stuff = Array(Config.scoring.length).fill({ amount: 0, points: 0 });
         misses = Object.fromEntries(Config.scoring.map((score: any) => [score.name, 0]));
         climb1 = false;
@@ -237,8 +238,12 @@
             set_stuff_i_really_dont_wanna_deal_with_right_now_insert_name_here(state);
         };
     }
+
+
     const [team, set_team] = create_number_binding($current_match, 'team');
     const [match, set_match] = create_number_binding($current_match, 'match');
+    
+    
 </script>
 
 <svelte:head>
@@ -337,13 +342,16 @@
                 }}>Ready</Button
             >
         </main>
+    
     {:else if $scout_state === 1}
         <main in:slide out:slide>
+    
             {#if game_state === 'pre'}
                 <Button onclick={start} class="bg-specialred">Start Game</Button>
             {:else}
+    
                 <h1 class="text-2xl border border-white inline p-0.1 rounded">
-                    &nbsp;{timer?.formatted ?? ''}&nbsp;{uppercase(game_state)} | Score: {score.overall}&nbsp;
+                    &nbsp;{timer?.formatted ?? ''}&nbsp;{uppercase(game_state)}| Score: {score.overall}&nbsp;
                 </h1>
                 <br /><br />
                 <Button
@@ -359,44 +367,23 @@
                         update_score(Config.redo);
                     }}>Redo</Button
                 ><br /><br />
-                {#each Object.entries(score_names) as [name, subsets], i}
-                    {#if subsets.length === 1}
+                
+            {#each Object.entries(score_names) as [name, subsets]}
+                    
                         <Button onclick={score_score(subsets[0].index)}
-                        class={button_class}
-                            >{pretty(subsets[0].name)}Fuel +</Button
-                        >
-                        {:else}
-                        <Button
-                            onclick={function (e) {
-                                e.target === this ? score_score(score_bindings[i]!)() : null;
-                            }}
-                        >
-                            {pretty(name)}
-                            {'('}<select
-                                bind:value={
-                                    () => (score_bindings[i] ??= subsets[0].index),
-                                    v => (score_bindings[i] = v)
-                                }
-                                class="override-select"
-                            >
-                                {#each subsets as { name, index }}
-                                    <option class="bg-[#135fef]" value={index}>{name}</option>
-                                {/each}
-                            </select>{')'} Score
-                        </Button>
-                    {/if}
-                    <br /><br />
-                {/each}
-                
-                
-            
+                        class={button_class}>
+                        {pretty(name)} +1</Button>
+                        <Button onclick={score_score(subsets[1].index)}
+                        class={button_class}>{pretty(name)} +5</Button>
+                        
+            {/each}
             {#if game_state === 'auto'}
                 <Button
-                    disabled={climb1}
+                    disabled={climb1}   
                     onclick={score_score('points', 'climb1')}
                     class={button_class}>Climb Level 1 (Auto)</Button
                 >
-
+            
             {/if}
             {#if game_state === 'teleop'}
                     {#each ending_stuff, i}
@@ -410,37 +397,24 @@
                         {/if}
                     {/each}
                 {/if}
+            {#each questionthing, j}
+                    <Button
+                    disabled={questionthing[j]}
+                    class={button_class}>{uppercase(Config.questions[j].name)}</Button>
+
+            {/each}
                 {#if game_state === 'post'}
                     <Button onclick={finish} class={button_class}><b>Next Game</b></Button>
                 {/if}
                 <p></p>
-                {#each ["Defense", "Offense"] as modes}
-	                <label>
-                    
-		            <input
-			            type="radio"
-			            name=" "
-			            value={modes}
-			
-		                />  
-
-		{ modes} 
-	</label>
-{/each}
-              
-                <label>
-                    <p></p>
-                    <input type="checkbox" bind:checked={lightyes} />
-                    Did the robot score when the hub light was inactive?
-                </label>
-
                 <h2>Notes</h2>
                 <textarea
                     class="border-white rounded w-[80%] outline-none text-black p-2"
                     bind:value={notes}
                 ></textarea>
-            {/if}
-        </main>
+            
+        {/if}
+    </main>
     {/if}
     
 </main>

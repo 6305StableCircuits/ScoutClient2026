@@ -10,6 +10,7 @@ let undone: Record<string, any>[] = [];
 let game_state = 'auto';
 let scoring: Config['scoring'][number]['name'][] = [];
 let end: Config['end'][number]['name'][] = [];
+let questions: Config['questions'][number][]= [];
 var config: Config = {
     reset() {
         actions = [];
@@ -21,6 +22,7 @@ var config: Config = {
             points: 0,
             climb1: false,
             end: Object.fromEntries(this.end.map(({ name }) => [name, false])),
+            questions: Object.fromEntries(this.questions.map(({ name }) => [name, false])),
             scoring: Object.fromEntries(
                 this.scoring.map(({ name }) => [
                     name,
@@ -63,7 +65,7 @@ var config: Config = {
     },
     scoring: [
         {
-            name: 'Fuel +',
+            name: 'Fuel +1',
             auto: {
                 points: 1
             },
@@ -78,72 +80,77 @@ var config: Config = {
                     }
                 }
                 return {
-                    points: 1
+                    get points() {
+                        return 1;
+                    }
                 };
-    
             },
             score(points: number) {
                 actions.push(structuredClone(state));
                 state.points += points;
-                state.scoring['Fuel+'].amount++;
-                state.scoring['Fuel+'].points += points;
+                state.scoring['Fuel +1'].amount++;
+                state.scoring['Fuel +1'].points += points;
                 return state;
             }
         },
         {
-            name: 'Fuel -',
+            name: 'Fuel +5',
             auto: {
-                points: 1
+                points: 5
             },
             get teleop() {
                 if (game_state === 'auto') {
                     game_state = 'teleop';
                     for (let score of scoring) {
                         state.scoring[score] = {
-                            amount: 0 ,
+                            amount: 0,
                             points: 0
                         };
                     }
                 }
                 return {
-                    points: -1
+                    get points() {
+                        return 5;
+                    }
                 };
-    
             },
             score(points: number) {
                 actions.push(structuredClone(state));
                 state.points += points;
-                state.scoring['Fuel -'].amount--;
-                state.scoring['Fuel -'].points -= points;
+                state.scoring['Fuel +5'].amount++;
+                state.scoring['Fuel +5'].points += points;
+                return state;
+            }
+        },
+        {
+            name: 'Climb Level 1 (Auto)',
+            auto: {
+                points: 15
+            },
+            teleop: {
+                points: 10
+            },
+            once: 'per_phase',
+            /*score(points: number) {
+                if (game_state === 'auto') {
+                    game_state = 'teleop';
+                    for (const score of scoring) {
+                        state.points += points
+                        return state;
+                }                                           
+                }
+                actions.push(structuredClone(state));
+                state.climb['climb1'] = true;
+                state.points += points;
+                return state;*/
+            score(points: number) {
+                actions.push(structuredClone(state));
+                state.points += points;
                 return state;
             }
         }
+// issue with fuel points not showing up?
     ],
-    // climb
-    climb1: {
-        name: 'Climb Level 1 (Auto)',
-        points: 15,
-        /*score(points: number) {
-            if (game_state === 'auto') {
-                game_state = 'teleop';
-                for (const score of scoring) {
-                    state.points += points
-                    return state;
-                }
-            }
-            actions.push(structuredClone(state));
-            state.climb['climb1'] = true;
-            state.points += points;
-            return state;*/
-        score(points: number) {
-            actions.push(structuredClone(state));
-            state.climb1 = true;
-            state.points += points;
-            return state;
-
-        }
-    
-    },
     
     end: [
         {
@@ -202,7 +209,7 @@ var config: Config = {
             }
         }
     ],
-// not using park as of rn
+// not using park as of rn; reference
     park: {
         name: 'park',
         points: 2,
@@ -221,7 +228,18 @@ var config: Config = {
             state.points += points;
             return state;
         }
+    },
+questions: [
+    {
+        name: 'Defense',
+        toggle: 'False',
+    },
+    {
+        name: 'Offense',
+        toggle: 'False',
+
     }
+],
 } as const satisfies Config;
 state = {
     assists,
@@ -230,6 +248,7 @@ state = {
     climb1: false,
     park: false,
     end: Object.fromEntries(config.end.map(({ name }) => [name, false])),
+    questions: Object.fromEntries(config.questions.map(({ name }) => [name, false])),
     scoring: Object.fromEntries(
         config.scoring.map(({ name }) => [
             name,

@@ -16,7 +16,8 @@
         [1, 2],
         [2, 2]
     ];
-    let better_data = $state<Match[]>(data.matches);
+    // svelte-ignore state_referenced_locally
+        let better_data = $state<Match[]>(data.matches);
     const rankings = $derived(rank(better_data));
     const alliances = $derived(choose_alliances(rankings));
     // svelte-ignore state_referenced_locally
@@ -26,16 +27,14 @@
     const teamkeys = [
         'Team',
         'Match',
-        'Overall',
-        'Auto',
-        'L1 (Amount)',
-        'L2',
-        'L3',
-        'L4',
-        'Processor',
-        'Net',
-        'Barge',
-        'Accuracy'
+        'Overall', //total points
+        'Auto', //points
+        'Climbed in Auto?',
+        // update & append stats according to names
+        'Fuel +',
+        'Defense or Offense?',
+        'Climb Level'
+        
     ];
     const teams = $derived<number[]>([...new Set(better_data.map(({ team }) => Number(team)))]);
     const teamstuff = $derived.by(() => {
@@ -51,7 +50,7 @@
     async function get() {
         const matches = await get_matches;
         if (JSON.stringify(matches) !== JSON.stringify(better_data)) {
-            better_data = matches;
+            better_data = matches.map(match => Match.from(match));
             table.setRows(better_data);
             tabl.setRows(teamstuff as any);
         }
@@ -144,40 +143,20 @@
                             >{key.score['auto']['score']}</td
                         >
                         <td style="color:{foreground};border: 1px solid {foreground}"
-                            >{key.score['teleop']['coral (trough)']['amount']}</td
+                            >{key.score['teleop']['Fuel +']['amount']}</td
                         >
-                        <td style="color:{foreground};border: 1px solid {foreground}"
-                            >{key.score.teleop['coral (l2 branch)'].amount}</td
-                        >
-                        <td style="color:{foreground};border: 1px solid {foreground}"
-                            >{key.score.teleop['coral (l3 branch)'].amount}</td
-                        >
-                        <td style="color:{foreground};border: 1px solid {foreground}"
-                            >{key.score.teleop['coral (l4 branch)'].amount}</td
-                        >
-                        <td style="color:{foreground};border: 1px solid {foreground}"
-                            >{key.score.teleop['algae (processor)'].amount}</td
-                        >
-                        <td style="color:{foreground};border: 1px solid {foreground}"
-                            >{key.score.teleop['algae (net)'].amount}</td
-                        >
-                        {#if key.score.teleop['deep cage']}
-                            <td style="color:{foreground};border: 1px solid {foreground}"
-                                >Deep Cage</td
-                            >
-                        {:else if key.score.teleop['shallow cage']}
-                            <td style="color:{foreground};border: 1px solid {foreground}"
-                                >Shallow Cage</td
-                            >
+
                             <!-- {:else if key.score.teleop['park']}
                                 <td style="color:black;border: 1px solid black"
                                 >Park</td
                             > -->
-                        {:else}
+                        
+                        <!-- {:else}
                             <td style="color:{foreground};border: 1px solid {foreground}"
                                 ><i>Not Stated</i></td
                             >
-                        {/if}
+                        {/if} -->
+
                         <td style="color:{foreground};border: 1px solid {foreground}"
                             >{key.score['accuracy'].overall * 100}%</td
                         >

@@ -92,6 +92,7 @@ export declare type Config = {
     readonly climb1: Goal;
     readonly end: Goal[];
     readonly park: Goal;
+    readonly questions: qna[];
 
 };
 type Goal = {
@@ -99,7 +100,11 @@ type Goal = {
     readonly points: number;
     readonly score: (points: number) => Record<string, any>;
 };
-
+type qna = {
+    readonly name: string;
+    readonly toggle: string;
+    
+};
 type Scoring = {
     readonly name: string;
     readonly auto: {
@@ -108,6 +113,6 @@ type Scoring = {
     readonly teleop: {
         readonly points: number;
     };
-    readonly score: (points: number) => object;
+    readonly score: (points: number) => Object;
 };
 

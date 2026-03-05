@@ -7,6 +7,7 @@ export const transport: Transport = {
             return value instanceof Match && value.serialize();
         },
         decode(data) {
+            console.log(data);
             return Match.from(data);
         }
     }
