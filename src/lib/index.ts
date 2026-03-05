@@ -5,7 +5,7 @@ import Config from '$lib/config';
 import type Match from './Match.svelte';
 
 export const frc_year = 2026;
-export const noop = () => {};
+export const noop = () => { };
 export const paths = {
     home: '',
     scout: 'scout',
@@ -66,12 +66,17 @@ export function rank(matches: Match[]): number[] {
     return rankings;
 }
 
-export function split_scoring(score_names: string[]) {
+export function split_scoring(score_names: string[], game_state: 'teleop' | 'auto' | 'pre' | 'post') {
+    if (game_state === 'pre' || game_state === 'post') {
+        return [];
+    }
     const res: Record<string, { name: string; index: number }[]> = {};
     for (const name of score_names) {
+        if (!Config.scoring.find(({ name: n }) => name === n)?.[game_state]) {
+            continue;
+        }
         const main = name.split(' ')[0];
-        const subset = pretty(name.replace(main + '', '').replace(/\((.*?)\)/, (_, m) => m));
-        // console.log(subset);
+        const subset = pretty(name.replace(main, '').replace(/\((.*?)\)/, (_, m) => m));
         (res[main] ??= []).push({
             name: subset,
             index: score_names.indexOf(name)
