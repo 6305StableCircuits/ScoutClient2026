@@ -60,11 +60,7 @@
     let scoring_stuff: Array<{ amount: number; points: number }> = $state(
         Array(Config.scoring.length).fill({ amount: 0, points: 0 })
     );
-<<<<<<< HEAD
-    const fuelbuttonclass = 'py-2xl h-30 w-50'
-    let scoring_stuff: Array<{ amount: number; points: number }> = $state(Array(Config.scoring.length).fill({ amount: 0, points: 0 }));
-=======
->>>>>>> 0d3a0af0b17d18e64614bf460d467fdc0e7ae351
+    const fuelbuttonclass = 'py-2xl h-30 w-50';
     let ending_stuff: any[] = $state(Array(Config.end.length).fill(false));
     let questionthing: any[] = $state(Array(Config.questions.length).fill(false));
     scouter; // used to shut up intellisense
@@ -408,28 +404,40 @@
                             >{name} {'('}{pretty(subsets[0].name)}{')'}</Button
                         >
                     {:else}
-                        <Button
-                            onclick={function (e) {
-                                e.target === this ? score_score(score_bindings[i]!)() : null;
-                            }}
-                            disabled={(score_bindings[i] ?? subsets[0].index) !== undefined &&
-                                once[game_state].has(
-                                    Config.scoring[score_bindings[i] ?? subsets[0].index].name
-                                )}
-                        >
-                            {pretty(name)}
-                            {'('}<select
-                                bind:value={
-                                    () => (score_bindings[i] ??= subsets[0].index),
-                                    v => (score_bindings[i] = v)
-                                }
-                                class="override-select"
+                        {#if name === 'Fuel'}
+                            {#each subsets as subset}
+                                <Button
+                                    onclick={score_score(subset.index)}
+                                    disabled={once[game_state].has(Config.scoring[subset.index].name)}
+                                    class={fuelbuttonclass}
+                                >
+                                    {name} {'('}{pretty(subset.name)}{')'}
+                                </Button>
+                            {/each}
+                        {:else}
+                            <Button
+                                onclick={function (e) {
+                                    e.target === this ? score_score(score_bindings[i]!)() : null;
+                                }}
+                                disabled={(score_bindings[i] ?? subsets[0].index) !== undefined &&
+                                    once[game_state].has(
+                                        Config.scoring[score_bindings[i] ?? subsets[0].index].name
+                                    )}
                             >
-                                {#each subsets as { name, index }}
-                                    <option class="bg-[#135fef]" value={index}>{name}</option>
-                                {/each}
-                            </select>{')'} Score
-                        </Button>
+                                {pretty(name)}
+                                {'('}<select
+                                    bind:value={
+                                        () => (score_bindings[i] ??= subsets[0].index),
+                                        v => (score_bindings[i] = v)
+                                    }
+                                    class="override-select"
+                                >
+                                    {#each subsets as { name, index }}
+                                        <option class="bg-[#135fef]" value={index}>{name}</option>
+                                    {/each}
+                                </select>{')'} Score
+                            </Button>
+                        {/if}
                     {/if}
                     <br /><br />
                 {/each}
