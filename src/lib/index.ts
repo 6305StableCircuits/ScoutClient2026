@@ -5,7 +5,7 @@ import Config from '$lib/config';
 import type Match from './Match.svelte';
 
 export const frc_year = 2026;
-export const noop = () => {};
+export const noop = () => { };
 export const paths = {
     home: '',
     scout: 'scout',
@@ -66,12 +66,17 @@ export function rank(matches: Match[]): number[] {
     return rankings;
 }
 
-export function split_scoring(score_names: string[]) {
+export function split_scoring(score_names: string[], game_state: 'teleop' | 'auto' | 'pre' | 'post') {
+    if (game_state === 'pre' || game_state === 'post') {
+        return [];
+    }
     const res: Record<string, { name: string; index: number }[]> = {};
     for (const name of score_names) {
+        if (!Config.scoring.find(({ name: n }) => name === n)?.[game_state]) {
+            continue;
+        }
         const main = name.split(' ')[0];
-        const subset = pretty(name.replace(main + '', '').replace(/\((.*?)\)/, (_, m) => m));
-        // console.log(subset);
+        const subset = pretty(name.replace(main, '').replace(/\((.*?)\)/, (_, m) => m));
         (res[main] ??= []).push({
             name: subset,
             index: score_names.indexOf(name)
@@ -86,7 +91,7 @@ export function get_average_score(matches: Match[]): Score {
         overall: <any[]>[],
         auto: <Record<string, any>>{
             score: [],
-            leave: [],
+            climb1: [],
             ...Object.fromEntries(
                 Config.scoring.map(({ name }) => [
                     name,
@@ -118,7 +123,7 @@ export function get_average_score(matches: Match[]): Score {
     for (const { score } of matches) {
         res.overall.push(score.overall);
         res.auto.score.push(score.auto.score);
-        res.auto.leave.push(score.auto.leave);
+        res.auto.climb1.push(score.auto.climb1);
         for (let s of Config.scoring) {
             res.auto[coerce<Record<string, any>>(s).name].amount.push(
                 score.auto[s.name as keyof InstanceType<(typeof Match)['Scoring']>['auto']].amount
@@ -144,7 +149,7 @@ export function get_average_score(matches: Match[]): Score {
         // @ts-expect-error
         auto: {
             score: average(res.auto.score),
-            leave: average(res.auto.leave),
+            climb1: average(res.auto.climb1),
             ...Config.scoring
                 .map(({ name }) => ({
                     amount: average(res.auto[name].amount),

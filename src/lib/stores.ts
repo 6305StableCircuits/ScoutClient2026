@@ -62,7 +62,12 @@ function deep<T extends object>(
         }
     };
 }
-export const matches = persisted<{ matches: Match[]; key?: number }>('matches', { matches: [] });
+export const matches = persisted<{ matches: Match[]; key?: number }>('matches', { matches: [] }, {
+    serializer: {
+        stringify: match => JSON.stringify({ matches: match.matches.map(match => match.serialize()), key: match.key }),
+        parse: string => ({ matches: (JSON.parse(string) as { matches: Array<ReturnType<Match['serialize']>> }).matches.map(match => Match.from(match)), key: (JSON.parse(string) as { key: number }).key })
+    }
+});
 export const scouter = persisted('scouter', '', {
     serializer: {
         parse: (v: string) => v,

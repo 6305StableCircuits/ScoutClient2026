@@ -21,6 +21,7 @@
     import Transition from 'svelte-transition';
     import { onDestroy } from 'svelte';
     import Match from '$lib/Match.svelte';
+    import { SvelteSet } from 'svelte/reactivity';
     let state_confirm = $state<boolean | null>();
     const intervals = $state<(number | NodeJS.Timeout)[]>([]);
     onDestroy(() => {
@@ -56,8 +57,16 @@
     //globalThis.Button = Button;
     let papyrus = $derived($scouter.toLowerCase() === 'papyrus');
     const button_class = 'py-2xl h-20 w-40';
+    let scoring_stuff: Array<{ amount: number; points: number }> = $state(
+        Array(Config.scoring.length).fill({ amount: 0, points: 0 })
+    );
+<<<<<<< HEAD
+    const fuelbuttonclass = 'py-2xl h-30 w-50'
     let scoring_stuff: Array<{ amount: number; points: number }> = $state(Array(Config.scoring.length).fill({ amount: 0, points: 0 }));
+=======
+>>>>>>> 0d3a0af0b17d18e64614bf460d467fdc0e7ae351
     let ending_stuff: any[] = $state(Array(Config.end.length).fill(false));
+    let questionthing: any[] = $state(Array(Config.questions.length).fill(false));
     scouter; // used to shut up intellisense
     let score = $derived($current_match.score.concise);
     onMount(() => {
@@ -68,11 +77,12 @@
         reset();
     }
     const scoring_names = Config.scoring.map(({ name }) => name);
-    let score_names = split_scoring(scoring_names);
+    let game_state = $state<'pre' | 'auto' | 'teleop' | 'post'>('pre');
+    let score_names = $derived(split_scoring(scoring_names, game_state));
     // warning ts gets very angry here, `coerce` comes in handy
     let misses = Object.fromEntries(Config.scoring.map((score: any) => [score.name, 0]));
     let match_score = $derived($current_match.score);
-    let leave = $state(false);
+    let climb1 = $state(false);
     let end = $state(Object.fromEntries(Config.end.map(({ name }) => [name, false])));
     let red = $state($alliance_score === 'red');
     let alliance = $derived<Match['alliance']>(red ? 'red' : 'blue');
@@ -85,6 +95,28 @@
     let undo_available = $state(false);
     let redo_available = $state(false);
     let assists = $state(0);
+    const once = {
+        get pre() {
+            return new SvelteSet<string>();
+        },
+        get post() {
+            return new SvelteSet<string>();
+        },
+        auto: new SvelteSet<string>(),
+        teleop: new SvelteSet<string>()
+    };
+    $effect(() => {
+        console.groupCollapsed('auto');
+        for (const name of once.auto) {
+            console.log(name);
+        }
+        console.groupEnd();
+        console.groupCollapsed('teleop');
+        for (const name of once.teleop) {
+            console.log(name);
+        }
+        console.groupEnd();
+    });
     $inspect(scoring_stuff);
     $effect(() => {
         $current_match.notes = notes;
@@ -103,7 +135,6 @@
         ({ undo_available, redo_available } = Config);
     });
     // $inspect(match_score);
-    let game_state = $state<'pre' | 'auto' | 'teleop' | 'post'>('pre');
     $inspect($current_match);
     $inspect(ending_stuff);
     let wake_lock: WakeLockSentinel | null = null;
@@ -115,16 +146,16 @@
             } catch {}
         }
         $current_match.date = Date.now();
-        timer = new Timer(DEV ? '0:30' : '2:30');
+        timer = new Timer(false ? '0:20' : '2:40');
         timer.start();
         $started_current_match = true;
         game_state = 'auto';
-        timer.on('2:15', () => {
+        timer.on('2:20', () => {
             timer!.pause();
             setTimeout(() => {
                 timer!.play();
                 game_state = 'teleop';
-            }, 3000);
+            }, 2000);
         });
         timer.on('finish', () => {
             game_state = 'post';
@@ -140,9 +171,10 @@
         score;
         end = Object.fromEntries(Config.end.map(({ name }) => [name, false]));
         ending_stuff = Array(Config.end.length).fill(false);
+        questionthing = Array(Config.questions.length).fill(false);
         scoring_stuff = Array(Config.scoring.length).fill({ amount: 0, points: 0 });
         misses = Object.fromEntries(Config.scoring.map((score: any) => [score.name, 0]));
-        leave = false;
+        climb1 = false;
         notes = '';
         score_bindings = Array(Config.scoring.length + 1).fill(undefined);
     }
@@ -162,7 +194,7 @@
         let end;
         ({
             points: score[part],
-            leave: $current_match.score.auto.leave,
+            climb1: $current_match.score.auto.climb1,
             end,
             scoring,
             assists
@@ -176,19 +208,27 @@
     }
     function score_score<
         N extends keyof (typeof Config)[T],
-        T extends 'scoring' | 'end' | 'leave' = 'scoring'
+        T extends 'scoring' | 'end' = 'scoring'
     >(index: N, type?: T) {
-        if (type === 'leave') {
-            return function () {
-                const state = Config.leave.score(Config.leave.points);
-                set_stuff_i_really_dont_wanna_deal_with_right_now_insert_name_here(state);
-                return state;
-            };
-        }
         type ??= 'scoring' as T;
         return function () {
             let thing = Config[type][index];
             if (type === 'scoring') thing = thing[part as keyof unknown];
+            if (thing === undefined) {
+                return;
+            }
+            if (
+                (thing && typeof thing === 'object' && 'once' in thing && thing.once) ||
+                (Config[type][index] &&
+                    typeof Config[type][index] === 'object' &&
+                    // @ts-expect-error wtf
+                    'once' in Config[type][index] &&
+                    // @ts-expect-error wtf
+                    (Config[type][index].once === true || Config[type][index].once === 'per_phase'))
+            ) {
+                // @ts-expect-error argh
+                once[part].add(Config[type][index].name);
+            }
             const state = coerce<(...args: any[]) => Record<string, any>>(
                 coerce<Record<string, (...args: any[]) => any>>(Config[type][index]).score
             )(coerce<Record<string, any>>(thing).points);
@@ -236,6 +276,7 @@
             set_stuff_i_really_dont_wanna_deal_with_right_now_insert_name_here(state);
         };
     }
+
     const [team, set_team] = create_number_binding($current_match, 'team');
     const [match, set_match] = create_number_binding($current_match, 'match');
 </script>
@@ -342,7 +383,7 @@
                 <Button onclick={start} class="bg-specialred">Start Game</Button>
             {:else}
                 <h1 class="text-2xl border border-white inline p-0.1 rounded">
-                    &nbsp;{timer?.formatted ?? ''}&nbsp;{uppercase(game_state)} | Score: {score.overall}&nbsp;
+                    &nbsp;{timer?.formatted ?? ''}&nbsp;{uppercase(game_state)}| Score: {score.overall}&nbsp;
                 </h1>
                 <br /><br />
                 <Button
@@ -360,14 +401,21 @@
                 ><br /><br />
                 {#each Object.entries(score_names) as [name, subsets], i}
                     {#if subsets.length === 1}
-                        <Button onclick={score_score(subsets[0].index)}
-                            >{pretty(name + '(' + subsets[0].name + ')')} Score</Button
+                        <Button
+                            onclick={score_score(subsets[0].index)}
+                            class={button_class}
+                            disabled={once[game_state].has(Config.scoring[subsets[0].index].name)}
+                            >{name} {'('}{pretty(subsets[0].name)}{')'}</Button
                         >
                     {:else}
                         <Button
                             onclick={function (e) {
                                 e.target === this ? score_score(score_bindings[i]!)() : null;
                             }}
+                            disabled={(score_bindings[i] ?? subsets[0].index) !== undefined &&
+                                once[game_state].has(
+                                    Config.scoring[score_bindings[i] ?? subsets[0].index].name
+                                )}
                         >
                             {pretty(name)}
                             {'('}<select
@@ -375,7 +423,7 @@
                                     () => (score_bindings[i] ??= subsets[0].index),
                                     v => (score_bindings[i] = v)
                                 }
-                                class="override-select px-0 mx-0"
+                                class="override-select"
                             >
                                 {#each subsets as { name, index }}
                                     <option class="bg-[#135fef]" value={index}>{name}</option>
@@ -386,40 +434,24 @@
                     <br /><br />
                 {/each}
 
-                {@const last = score_bindings.length - 1}
-                {#each Object.entries(score_names) as [name, subsets], i}
-                    <Button
-                        class={button_class}
-                        onclick={function (e) {
-                            if (e.target === this) miss(scoring_names[score_bindings.at(-1)!]);
-                        }}
-                    >
-                        Miss {pretty(name)}
-                        <select
-                            class="override-select"
-                            style="width: 100%"
-                            bind:value={
-                                () => (score_bindings[i] ??= subsets[0].index),
-                                v => (score_bindings[i] = v)
-                            }
-                        >
-                            {#each subsets as { name, index }}
-                                <option value={index}>{pretty(name)}</option>
-                            {/each}
-                        </select>
-                    </Button>
-                {/each}
+                <!-- {#each Object.entries(score_names) as [name, subsets]}
+                    
+                        <Button onclick={score_score(subsets[0].index)}
+                        class={fuelbuttonclass}>
+                        {pretty(name)} +1</Button>
+                        <Button onclick={score_score(subsets[1].index)}
+                        class={fuelbuttonclass}>{pretty(name)} +5</Button>
+                        
+            {/each} -->
+                <!-- {#if game_state === 'auto'}
                 <Button
-                    onclick={() => update_score(Config.assist)}
-                    class={button_class}>Assist</Button
+                    disabled={climb1}   
+                    onclick={score_score()}
+                    class={button_class}>Climb Level 1 (Auto)</Button
                 >
-                {#if game_state === 'auto'}
-                    <Button
-                        disabled={leave}
-                        onclick={score_score('points', 'leave')}
-                        class={button_class}>Leave</Button
-                    >
-                {:else}
+            
+            {/if} -->
+                {#if game_state === 'teleop'}
                     {#each ending_stuff, i}
                         <Button
                             disabled={ending_stuff[i]}
@@ -431,9 +463,15 @@
                         {/if}
                     {/each}
                 {/if}
+                {#each questionthing, j}
+                    <Button disabled={questionthing[j]} class={button_class}
+                        >{uppercase(Config.questions[j].name)}</Button
+                    >
+                {/each}
                 {#if game_state === 'post'}
                     <Button onclick={finish} class={button_class}><b>Next Game</b></Button>
                 {/if}
+                <p></p>
                 <h2>Notes</h2>
                 <textarea
                     class="border-white rounded w-[80%] outline-none text-black p-2"

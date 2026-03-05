@@ -9,11 +9,14 @@ export declare type StringLike = string | number | bigint;
 export declare type StyleSize = `${number}xl` | `xl` | 'lg' | 'md' | 'sm';
 export declare type Scoring = {
     name: string;
-    auto: {
+    readonly once?: boolean | 'per_phase';
+    auto?: {
         points: number;
+        once?: boolean;
     };
-    teleop: {
+    teleop?: {
         points: number;
+        once?: boolean;
     };
     score: (points: number) => Record<string, any>;
 };
@@ -21,7 +24,7 @@ export declare type Score = {
     overall: number;
     auto: {
         score: number;
-        leave: boolean;
+        climb1: boolean;
         [x: typeof Config.scoring[number]['name']]: {
             amount: number;
             points: number;
@@ -81,6 +84,7 @@ export declare interface TimerOptions {
     };
 };
 export declare type Config = {
+
     readonly reset: () => void;
     readonly undo: () => object;
     readonly redo: () => object;
@@ -88,22 +92,31 @@ export declare type Config = {
     readonly undo_available: boolean;
     readonly redo_available: boolean;
     readonly scoring: Scoring[];
-    readonly leave: Goal;
     readonly end: Goal[];
-    readonly park: Goal;
+    readonly park?: Goal;
+    readonly questions: qna[];
+
 };
 type Goal = {
     readonly name: string;
     readonly points: number;
+    readonly once?: boolean | 'per_phase';
     readonly score: (points: number) => Record<string, any>;
+};
+type qna = {
+    readonly name: string;
+    readonly toggle: string;
+
 };
 type Scoring = {
     readonly name: string;
+    readonly once?: boolean | 'per_phase';
     readonly auto: {
         readonly points: number;
     };
     readonly teleop: {
         readonly points: number;
     };
-    readonly score: (points: number) => object;
+    readonly score: (points: number) => Object;
 };
+

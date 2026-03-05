@@ -10,6 +10,7 @@ let undone: Record<string, any>[] = [];
 let game_state = 'auto';
 let scoring: Config['scoring'][number]['name'][] = [];
 let end: Config['end'][number]['name'][] = [];
+let questions: Config['questions'][number][] = [];
 var config: Config = {
     reset() {
         actions = [];
@@ -19,8 +20,9 @@ var config: Config = {
             assists,
             charged,
             points: 0,
-            leave: false,
+            climb1: false,
             end: Object.fromEntries(this.end.map(({ name }) => [name, false])),
+            questions: Object.fromEntries(this.questions.map(({ name }) => [name, false])),
             scoring: Object.fromEntries(
                 this.scoring.map(({ name }) => [
                     name,
@@ -31,6 +33,7 @@ var config: Config = {
                 ])
             )
         };
+
         // console.log(state);
         assists = 0;
     },
@@ -62,9 +65,9 @@ var config: Config = {
     },
     scoring: [
         {
-            name: 'coral (trough)',
+            name: 'Fuel +1',
             auto: {
-                points: 3
+                points: 1
             },
             get teleop() {
                 if (game_state === 'auto') {
@@ -78,80 +81,22 @@ var config: Config = {
                 }
                 return {
                     get points() {
-                        return 2;
+                        return 1;
                     }
                 };
             },
             score(points: number) {
                 actions.push(structuredClone(state));
                 state.points += points;
-                state.scoring['coral (trough)'].amount++;
-                state.scoring['coral (trough)'].points += points;
+                state.scoring['Fuel +1'].amount++;
+                state.scoring['Fuel +1'].points += points;
                 return state;
             }
         },
         {
-            name: 'coral (l2 branch)',
+            name: 'Fuel +5',
             auto: {
-                points: 4
-            },
-            get teleop() {
-                if (game_state === 'auto') {
-                    game_state = 'teleop';
-                    for (let score of scoring) {
-                        state.scoring[score] = {
-                            amount: 0,
-                            points: 0
-                        };
-                    }
-                }
-                return {
-                    get points() {
-                        return 3;
-                    }
-                };
-            },
-            score(points: number) {
-                actions.push(structuredClone(state));
-                state.points += points;
-                state.scoring['coral (l2 branch)'].amount++;
-                state.scoring['coral (l2 branch)'].points += points;
-                return state;
-            }
-        },
-        {
-            name: 'coral (l3 branch)',
-            auto: {
-                points: 6
-            },
-            get teleop() {
-                if (game_state === 'auto') {
-                    game_state = 'teleop';
-                    for (let score of scoring) {
-                        state.scoring[score] = {
-                            amount: 0,
-                            points: 0
-                        };
-                    }
-                }
-                return {
-                    get points() {
-                        return 4;
-                    }
-                };
-            },
-            score(points: number) {
-                actions.push(structuredClone(state));
-                state.points += points;
-                state.scoring['coral (l3 branch)'].amount++;
-                state.scoring['coral (l3 branch)'].points += points;
-                return state;
-            }
-        },
-        {
-            name: 'coral (l4 branch)',
-            auto: {
-                points: 7
+                points: 5
             },
             get teleop() {
                 if (game_state === 'auto') {
@@ -172,134 +117,55 @@ var config: Config = {
             score(points: number) {
                 actions.push(structuredClone(state));
                 state.points += points;
-                state.scoring['coral (l4 branch)'].amount++;
-                state.scoring['coral (l4 branch)'].points += points;
+                state.scoring['Fuel +5'].amount++;
+                state.scoring['Fuel +5'].points += points;
                 return state;
             }
         },
         {
-            name: 'algae (processor)',
+            name: 'Climb (Level 1)',
             auto: {
-                points: 6
+                points: 15
             },
-            get teleop() {
-                if (game_state === 'auto') {
-                    game_state = 'teleop';
-                    for (let score of scoring) {
-                        state.scoring[score] = {
-                            amount: 0,
-                            points: 0
-                        };
-                    }
-                }
-                return {
-                    points: 6
-                };
+            teleop: {
+                points: 10
             },
+            once: 'per_phase',
             score(points: number) {
                 actions.push(structuredClone(state));
                 state.points += points;
-                state.scoring['algae (processor)'].amount++;
-                state.scoring['algae (processor)'].points += points;
                 return state;
             }
         },
         {
-            name: 'algae (net)',
-            auto: {
-                points: 4
-            },
-            get teleop() {
-                if (game_state === 'auto') {
-                    game_state = 'teleop';
-                    for (const score of scoring) {
-                        state.scoring[score] = {
-                            amount: 0,
-                            points: 0
-                        };
-                    }
-                }
-                return {
-                    points: 4
-                };
+            name: 'Climb (Level 2)',
+            teleop: {
+                points: 20,
+                once: true
             },
             score(points: number) {
                 actions.push(structuredClone(state));
                 state.points += points;
-                state.scoring['algae (net)'].amount++;
-                state.scoring['algae (net)'].points += points;
+                return state;
+            }
+        },
+        {
+            name: 'Climb (Level 3)',
+            teleop: {
+                points: 30,
+                once: true
+            },
+            score(points: number) {
+                actions.push(structuredClone(state));
+                state.points += points;
                 return state;
             }
         }
+        // issue with fuel points not showing up?
     ],
-    leave: {
-        name: 'Leave',
-        points: 2,
-        score(points: number) {
-            actions.push(structuredClone(state));
-            state.leave = true;
-            state.points += points;
-            return state;
-        }
-    },
-    end: [
-        {
-            name: 'park',
-            points: 2,
-            score(points: number) {
-                if (game_state === 'auto') {
-                    game_state = 'teleop';
-                    for (const score of scoring) {
-                        state.scoring[score] = {
-                            amount: 0,
-                            points: 0
-                        };
-                    }
-                }
-                actions.push(structuredClone(state));
-                state.end['park'] = true;
-                state.points += points;
-                return state;
-            }
-        },
-        {
-            name: 'deep cage',
-            points: 12,
-            score(points: number) {
-                if (game_state === 'auto') {
-                    game_state = 'teleop';
-                    for (const score of scoring) {
-                        state.scoring[score] = {
-                            amount: 0,
-                            points: 0
-                        };
-                    }
-                }
-                state.end['deep cage'] = true;
-                state.points += points;
-                return state;
-            }
-        },
-        {
-            name: 'shallow cage',
-            points: 6,
-            score(points: number) {
-                if (game_state === 'auto') {
-                    game_state = 'teleop';
-                    for (const score of scoring) {
-                        state.scoring[score] = {
-                            amount: 0,
-                            points: 0
-                        };
-                    }
-                }
-                actions.push(structuredClone(state));
-                state.end['shallow cage'] = true;
-                state.points += points;
-                return state;
-            }
-        }
-    ],
+
+    end: [],
+    // not using park as of rn; reference
     park: {
         name: 'park',
         points: 2,
@@ -318,15 +184,27 @@ var config: Config = {
             state.points += points;
             return state;
         }
-    }
+    },
+    questions: [
+        {
+            name: 'Defense',
+            toggle: 'False',
+        },
+        {
+            name: 'Offense',
+            toggle: 'False',
+
+        }
+    ],
 } as const satisfies Config;
 state = {
     assists,
     charged,
     points: 0,
-    leave: false,
+    climb1: false,
     park: false,
     end: Object.fromEntries(config.end.map(({ name }) => [name, false])),
+    questions: Object.fromEntries(config.questions.map(({ name }) => [name, false])),
     scoring: Object.fromEntries(
         config.scoring.map(({ name }) => [
             name,

@@ -50,7 +50,11 @@
     }
     async function send() {
         $matches.key = await key;
-        await save($matches as typeof $matches & { key: number }).updates();
+        const data = {
+            matches: $matches.matches.map(match => match.serialize()),
+            key: $matches.key
+        }
+        await save(data as typeof $matches & { key: number }).updates();
         key = key_generator(key.current!);
         $matches = { matches: [] };
         return true;
