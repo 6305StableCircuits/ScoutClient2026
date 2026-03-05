@@ -56,6 +56,7 @@
     //globalThis.Button = Button;
     let papyrus = $derived($scouter.toLowerCase() === 'papyrus');
     const button_class = 'py-2xl h-20 w-40';
+    const fuelbuttonclass = 'py-2xl h-30 w-50'
     let scoring_stuff: Array<{ amount: number; points: number }> = $state(Array(Config.scoring.length).fill({ amount: 0, points: 0 }));
     let ending_stuff: any[] = $state(Array(Config.end.length).fill(false));
     let questionthing: any[] = $state(Array(Config.questions.length).fill(false));
@@ -243,7 +244,18 @@
     const [team, set_team] = create_number_binding($current_match, 'team');
     const [match, set_match] = create_number_binding($current_match, 'match');
     
-    
+    function create_question(index: keyof typeof Config.questions): () => void {
+        const updater = score_score(index, 'end');
+        return function () {
+            const state = updater() as { questions: Record<string, boolean>; };
+            for (const question of Config.questions) {
+                if (Config.questions[index] === question) continue;
+                if (state.questions[question.name] === false) continue;
+                state.questions[question.name] = false;
+            }
+        };
+    }
+
 </script>
 
 <svelte:head>
@@ -371,20 +383,20 @@
             {#each Object.entries(score_names) as [name, subsets]}
                     
                         <Button onclick={score_score(subsets[0].index)}
-                        class={button_class}>
+                        class={fuelbuttonclass}>
                         {pretty(name)} +1</Button>
                         <Button onclick={score_score(subsets[1].index)}
-                        class={button_class}>{pretty(name)} +5</Button>
+                        class={fuelbuttonclass}>{pretty(name)} +5</Button>
                         
             {/each}
-            {#if game_state === 'auto'}
+            <!-- {#if game_state === 'auto'}
                 <Button
                     disabled={climb1}   
                     onclick={score_score('points', 'climb1')}
                     class={button_class}>Climb Level 1 (Auto)</Button
                 >
             
-            {/if}
+            {/if} -->
             {#if game_state === 'teleop'}
                     {#each ending_stuff, i}
                         <Button
@@ -400,6 +412,7 @@
             {#each questionthing, j}
                     <Button
                     disabled={questionthing[j]}
+                    onclick={create_question(j)}
                     class={button_class}>{uppercase(Config.questions[j].name)}</Button>
 
             {/each}
