@@ -9,6 +9,7 @@ export declare type StringLike = string | number | bigint;
 export declare type StyleSize = `${number}xl` | `xl` | 'lg' | 'md' | 'sm';
 export declare type Scoring = {
     name: string;
+    readonly once?: boolean | 'per_phase';
     auto: {
         points: number;
     };
@@ -98,6 +99,7 @@ export declare type Config = {
 type Goal = {
     readonly name: string;
     readonly points: number;
+    readonly once?: boolean | 'per_phase';
     readonly score: (points: number) => Record<string, any>;
 };
 type qna = {
@@ -107,6 +109,7 @@ type qna = {
 };
 type Scoring = {
     readonly name: string;
+    readonly once?: boolean | 'per_phase';
     readonly auto: {
         readonly points: number;
     };
