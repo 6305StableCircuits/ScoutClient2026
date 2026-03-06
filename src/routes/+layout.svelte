@@ -7,8 +7,10 @@
     import { settings } from '$lib/stores';
     import fish from '$lib/assets/fish-spinning-compressed.gif';
     import { injectAnalytics } from '@vercel/analytics/sveltekit';
+    import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
     import { dev } from '$app/environment';
     injectAnalytics({ mode: dev ? 'development' : 'production' });
+    injectSpeedInsights();
     //globalThis["$"] = eval("$");
     let loaded = $state(false);
     let { children } = $props();
