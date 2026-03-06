@@ -37,6 +37,7 @@
         "@supabase/supabase-js": "^2.98.0",
         "@svelte-put/clickoutside": "^4.0.0",
         "@sveltejs/enhanced-img": "^0.8.5",
+        "@vercel/analytics": "^1.6.1",
         "dotenv": "^16.6.1",
         "esm-env": "^1.2.2",
         "statuses": "^2.0.2",

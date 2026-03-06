@@ -6,6 +6,9 @@
     import { fade } from 'svelte/transition';
     import { settings } from '$lib/stores';
     import fish from '$lib/assets/fish-spinning-compressed.gif';
+    import { injectAnalytics } from '@vercel/analytics/sveltekit';
+    import { dev } from '$app/environment';
+    injectAnalytics({ mode: dev ? 'development' : 'production' });
     //globalThis["$"] = eval("$");
     let loaded = $state(false);
     let { children } = $props();
