@@ -5,13 +5,13 @@ import Timer, { sleep } from '$lib/Timer.svelte';
 export default class Match {
     static State = class State {
         match: Match;
-        timer = new Timer(DEV ? '0:30' : '2:40');
+        timer = new Timer(DEV ? '0:30' : '2:45');
         state = $state<'pre' | 'auto' | 'teleop' | 'post'>('pre');
         start() {
             this.match.date = Date.now();
             this.state = 'auto';
             this.timer.start();
-            this.timer.on('2:25', () => {
+            this.timer.on('2:35', () => {
                 this.timer.pause();
                 sleep(3).then(() => {
                     this.timer.play();
