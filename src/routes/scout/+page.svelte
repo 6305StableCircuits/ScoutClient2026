@@ -142,7 +142,7 @@
             } catch {}
         }
         $current_match.date = Date.now();
-        timer = new Timer(false ? '0:20' : '2:40');
+        timer = new Timer(false ? '0:20' : '2:50');
         timer.start();
         $started_current_match = true;
         game_state = 'auto';
