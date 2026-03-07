@@ -31,8 +31,9 @@
         'Auto', //points
         'Climbed in Auto?',
         // update & append stats according to names
-        'Fuel +1',
-        'Fuel +5'
+        'Fuel +5',
+        'Fuel +10'
+        'Fuel +20'
     ];
     const teams = $derived<number[]>([...new Set(better_data.map(({ team }) => Number(team)))]);
     const teamstuff = $derived.by(() => {
