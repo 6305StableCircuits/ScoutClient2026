@@ -5,7 +5,7 @@ import Timer, { sleep } from '$lib/Timer.svelte';
 export default class Match {
     static State = class State {
         match: Match;
-        timer = new Timer(DEV ? '0:30' : '2:30');
+        timer = new Timer(DEV ? '0:30' : '2:40');
         state = $state<'pre' | 'auto' | 'teleop' | 'post'>('pre');
         start() {
             this.match.date = Date.now();
