@@ -146,7 +146,7 @@
         timer.start();
         $started_current_match = true;
         game_state = 'auto';
-        timer.on('2:30', () => {
+        timer.on('2:20', () => {
             timer!.pause();
             setTimeout(() => {
                 timer!.play();
