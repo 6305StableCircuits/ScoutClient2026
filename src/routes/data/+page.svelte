@@ -141,10 +141,13 @@
                             >{key.score['auto']['score']}</td
                         >
                         <td style="color:{foreground};border: 1px solid {foreground}"
-                            >{key.score['teleop']['Fuel +1']['amount']}</td
+                            >{key.score['teleop']['Fuel +5']['amount']}</td
                         >
                         <td style="color:{foreground};border: 1px solid {foreground}"
-                            >{key.score['teleop']['Fuel +5']['amount']}</td
+                            >{key.score['teleop']['Fuel +10']['amount']}</td
+                        >
+                        <td style="color:{foreground};border: 1px solid {foreground}"
+                            >{key.score['teleop']['Fuel +20']['amount']}</td
                         >
 
                             <!-- {:else if key.score.teleop['park']}
