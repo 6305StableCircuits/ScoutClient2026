@@ -45,7 +45,7 @@
         });
     });
     // svelte-ignore state_referenced_locally
-    table.setRows(teamstuff as any);
+    tabl.setRows(teamstuff as any);
     const get_matches = matches();
     async function get() {
         const matches = await get_matches;
