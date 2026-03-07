@@ -11,7 +11,7 @@ export default class Match {
             this.match.date = Date.now();
             this.state = 'auto';
             this.timer.start();
-            this.timer.on('2:15', () => {
+            this.timer.on('2:25', () => {
                 this.timer.pause();
                 sleep(3).then(() => {
                     this.timer.play();
