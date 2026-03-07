@@ -65,35 +65,6 @@ var config: Config = {
     },
     scoring: [
         {
-            name: 'Fuel +1',
-            auto: {
-                points: 1
-            },
-            get teleop() {
-                if (game_state === 'auto') {
-                    game_state = 'teleop';
-                    for (let score of scoring) {
-                        state.scoring[score] = {
-                            amount: 0,
-                            points: 0
-                        };
-                    }
-                }
-                return {
-                    get points() {
-                        return 1;
-                    }
-                };
-            },
-            score(points: number) {
-                actions.push(structuredClone(state));
-                state.points += points;
-                state.scoring['Fuel +1'].amount++;
-                state.scoring['Fuel +1'].points += points;
-                return state;
-            }
-        },
-        {
             name: 'Fuel +5',
             auto: {
                 points: 5
@@ -119,6 +90,64 @@ var config: Config = {
                 state.points += points;
                 state.scoring['Fuel +5'].amount++;
                 state.scoring['Fuel +5'].points += points;
+                return state;
+            }
+        },
+        {
+            name: 'Fuel +10',
+            auto: {
+                points: 10
+            },
+            get teleop() {
+                if (game_state === 'auto') {
+                    game_state = 'teleop';
+                    for (let score of scoring) {
+                        state.scoring[score] = {
+                            amount: 0,
+                            points: 0
+                        };
+                    }
+                }
+                return {
+                    get points() {
+                        return 10;
+                    }
+                };
+            },
+            score(points: number) {
+                actions.push(structuredClone(state));
+                state.points += points;
+                state.scoring['Fuel +10'].amount++;
+                state.scoring['Fuel +10'].points += points;
+                return state;
+            }
+        },
+        {
+            name: 'Fuel +20',
+            auto: {
+                points: 20
+            },
+            get teleop() {
+                if (game_state === 'auto') {
+                    game_state = 'teleop';
+                    for (let score of scoring) {
+                        state.scoring[score] = {
+                            amount: 0,
+                            points: 0
+                        };
+                    }
+                }
+                return {
+                    get points() {
+                        return 20;
+                    }
+                };
+            },
+            score(points: number) {
+                actions.push(structuredClone(state));
+                state.points += points;
+                state.scoring['Fuel +20'].amount++;
+                state.scoring['Fuel +20'].points += points;
                 return state;
             }
         },
