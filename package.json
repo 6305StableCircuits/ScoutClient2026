@@ -9,7 +9,9 @@
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
         "format": "prettier --write .",
-        "lint": "prettier --check ."
+        "lint": "prettier --check .",
+        "test": "vitest run",
+        "test:watch": "vitest"
     },
     "devDependencies": {
         "@sveltejs/adapter-auto": "^7.0.1",
@@ -29,8 +31,10 @@
         "tailwindcss-animate": "^1.0.7",
         "terser": "^5.46.0",
         "typescript": "^5.9.3",
-        "vite": "^7.3.1"
+        "vite": "^7.3.1",
+        "vitest": "^4.0.18"
     },
+    "packageManager": "pnpm@10.32.0",
     "type": "module",
     "dependencies": {
         "@fontsource/inter": "^5.2.8",
