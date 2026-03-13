@@ -60,7 +60,7 @@
     let scoring_stuff: Array<{ amount: number; points: number }> = $state(
         Array(Config.scoring.length).fill({ amount: 0, points: 0 })
     );
-    const fuelbuttonclass = 'py-2xl h-30 w-50';
+    const fuelbuttonclass = 'py3xl h-40 w-40';
     let ending_stuff: any[] = $state(Array(Config.end.length).fill(false));
     let questionthing: any[] = $state(Array(Config.questions.length).fill(false));
     scouter; // used to shut up intellisense
