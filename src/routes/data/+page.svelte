@@ -23,7 +23,7 @@
     // svelte-ignore state_referenced_locally
     const table = new TableHandler(better_data, { rowsPerPage: 10, highlight: false });
     const tabl = new TableHandler(datata, { rowsPerPage: 10, highlight: false });
-    const keysss = ['match', 'team', 'alliance', 'scout', 'date', 'score', 'notes'];
+    const keysss = ['match', 'team', 'alliance', 'scout', 'date', 'score', 'autonotes', 'notes'];
     const teamkeys = [
         'Team',
         'Match',
@@ -76,7 +76,17 @@
                     <tr>
                         {#each keysss as key}
                             {@const bullshit = row[key as keyof typeof row]}
-                            {#if key === 'notes'}
+                            {#if key === 'autonotes'}
+                                {#if bullshit && coerce<string>(bullshit)?.length}
+                                    <td style="color:{foreground};border: 1px solid {foreground};"
+                                        ><ClickForMore stuff={coerce<string>(bullshit)} /></td
+                                    >
+                                {:else}
+                                    <td style="color:{foreground};border: 1px solid {foreground};"
+                                        ><i class="text-zinc-500">None Provided</i></td
+                                    >
+                                {/if}
+                            {:else if key === 'notes'}
                                 {#if bullshit && coerce<string>(bullshit)?.length}
                                     <td style="color:{foreground};border: 1px solid {foreground};"
                                         ><ClickForMore stuff={coerce<string>(bullshit)} /></td
@@ -142,9 +152,6 @@
                         >
                         <td style="color:{foreground};border: 1px solid {foreground}"
                             >{key.score['auto']['score']}</td
-                        >
-                        <td style="color:{foreground};border: 1px solid {foreground}"
-                            >{key.score['auto']['Trench']}</td
                         >
                         <td style="color:{foreground};border: 1px solid {foreground}"
                             >{key.score['teleop']['Fuel +1']['amount']}</td

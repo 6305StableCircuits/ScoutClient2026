@@ -147,6 +147,7 @@ export default class Match {
             teleop: object;
             accuracy: object;
         };
+        autonotes: string | null;
         notes: string | null;
         assists: number;
     }) {
@@ -167,10 +168,11 @@ export default class Match {
             teleop: object;
             accuracy: object;
         };
+        autonotes: string | null;
         notes: string | null;
         assists: number;
     } {
-        const { team, match, date, scout, alliance, score, notes, assists } = this;
+        const { team, match, date, scout, alliance, score, autonotes, notes, assists } = this;
         const { overall, auto, teleop, accuracy } = score;
         return {
             team,
@@ -178,6 +180,7 @@ export default class Match {
             date,
             scout,
             alliance,
+            autonotes,
             notes,
             assists,
             score: {
@@ -192,6 +195,7 @@ export default class Match {
     match = $state(0);
     date = $state(0);
     scout = $state('');
+    autonotes = $state<string | null>(null);
     notes = $state<string | null>(null);
     alliance = $state<'red' | 'blue'>('red');
     score = new Match.Scoring();
@@ -203,6 +207,7 @@ export default class Match {
             team: this.team,
             date: this.date,
             alliance: this.alliance,
+            autonotes: this.notes,
             notes: this.notes,
             assists: this.assists
         };

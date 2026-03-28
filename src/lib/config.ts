@@ -23,7 +23,6 @@ var config: Config = {
             activate: 0,
             climb1: false,
             end: Object.fromEntries(this.end.map(({ name }) => [name, false])),
-
             scoring: Object.fromEntries(
                 this.scoring.map(({ name }) => [
                     name,
@@ -147,7 +146,7 @@ var config: Config = {
                 }
                 return {
                     get points() {
-                        return 5;
+                        return 10;
                     }
                 };
             },
@@ -189,42 +188,7 @@ var config: Config = {
                 return state;
             }
         },    
-        {
-            name: 'Trench (Top)',
-            auto: {
-                points: 0,
-                activate: 1,
-                once: true
-            },
-            teleop: {
-                points: 0,
-                once: true
-            },
-            once: true,
-            score(points: number) {
-                actions.push(structuredClone(state));
-                state.points += points;
-                return state;
-            }
-        },
-        {
-            name: 'Trench (Bottom)',
-            auto: {
-                points: 0,
-                activate: 1,
-                once: true
-            },
-            teleop: {
-                points: 0,
-                once: true
-            },
-            once: true,
-            score(points: number) {
-                actions.push(structuredClone(state));
-                state.points += points;
-                return state;
-            }
-        },
+        
         {
             name: 'Climb (Level 1)',
             auto: {
