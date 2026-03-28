@@ -467,7 +467,7 @@
                     <Button onclick={finish} class={button_class}><b>Next Game</b></Button>
                 {/if}
                 <p></p>
-                <h2>Notes</h2>
+                <h2>Notes (include more stuff about auto pls :D)</h2>
                 <textarea
                     class="border-white rounded w-[80%] outline-none text-black p-2"
                     bind:value={notes}
