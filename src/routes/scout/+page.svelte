@@ -115,7 +115,6 @@
     });
     $inspect(scoring_stuff);
     $effect(() => {
-        $current_match.autonotes = autonotes;
         $current_match.notes = notes;
         for (let index = 0; index < Config.scoring.length; index++) {
             match_score[part][
@@ -172,7 +171,6 @@
         scoring_stuff = Array(Config.scoring.length).fill({ amount: 0, points: 0 });
         misses = Object.fromEntries(Config.scoring.map((score: any) => [score.name, 0]));
         climb1 = false;
-        autonotes = '';
         notes = '';
         score_bindings = Array(Config.scoring.length + 1).fill(undefined);
     }
@@ -241,7 +239,6 @@
     let score_bindings = $state<Array<number | undefined>>(
         Array(Config.scoring.length + 1).fill(undefined)
     );
-    let autonotes = $state('');
     let notes = $state('');
     function create_number_binding<K extends string, T extends Required<Record<K, number>>>(
         object: T,
@@ -474,7 +471,7 @@
                     <h2>Auto Stage Notes</h2>
                     <textarea
                         class="border-white rounded w-[80%] outline-none text-black p-2"
-                        bind:value={autonotes}
+                        bind:value={notes}
                     ></textarea>
                 {/if}
                 <p></p>

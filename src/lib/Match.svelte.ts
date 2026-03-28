@@ -207,7 +207,7 @@ export default class Match {
             team: this.team,
             date: this.date,
             alliance: this.alliance,
-            autonotes: this.notes,
+            autonotes: this.autonotes,
             notes: this.notes,
             assists: this.assists
         };
