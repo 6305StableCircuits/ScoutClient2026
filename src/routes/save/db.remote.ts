@@ -20,7 +20,6 @@ export const save = command(
             teleop: v.looseObject({}),
             accuracy: v.looseObject({})
         }),
-        autonotes: v.nullable(v.string()),
         notes: v.nullable(v.string()),
         assists: v.number()
     })),

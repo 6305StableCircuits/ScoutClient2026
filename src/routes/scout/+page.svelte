@@ -466,14 +466,6 @@
                 {#if game_state === 'post'}
                     <Button onclick={finish} class={button_class}><b>Next Game</b></Button>
                 {/if}
-                {#if game_state === 'auto'}
-                    <p></p>
-                    <h2>Auto Stage Notes</h2>
-                    <textarea
-                        class="border-white rounded w-[80%] outline-none text-black p-2"
-                        bind:value={notes}
-                    ></textarea>
-                {/if}
                 <p></p>
                 <h2>Notes</h2>
                 <textarea

@@ -63,7 +63,6 @@ export declare interface Match {
     match: number;
     date: number;
     scout: string;
-    autonotes?: string;
     notes?: string;
     alliance: 'red' | 'blue';
     score: Record<string, any>;

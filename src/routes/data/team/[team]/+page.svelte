@@ -29,7 +29,6 @@
     console.log(graph_data);
     let team_img = $state<HTMLImageElement>();
     const notes = $derived(data.matches.map((match: Match) => [match.match, match.notes]));
-    const autonotes = $derived(data.matches.map((match: Match) => [match.match, match.autonotes]));
     function fallback(img: HTMLImageElement) {
         $effect(() => {
             const on_error = () => {
@@ -91,10 +90,6 @@
     <center>
         <Graph data={graph_data} />
     </center>
-    <h2>Auto Stage Notes</h2>
-    {#each autonotes as [match, autonote]}
-        <b>Match {match}</b>: {autonote}<br />
-    {/each}
     <h2>Notes</h2>
     {#each notes as [match, note]}
         <b>Match {match}</b>: {note}<br />
