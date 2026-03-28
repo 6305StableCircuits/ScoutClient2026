@@ -62,7 +62,7 @@
     );
     const fuelbuttonclass = 'py3xl h-40 w-40';
     let ending_stuff: any[] = $state(Array(Config.end.length).fill(false));
-    let questionthing: any[] = $state(Array(Config.questions.length).fill(false));
+
     scouter; // used to shut up intellisense
     let score = $derived($current_match.score.concise);
     onMount(() => {
@@ -167,7 +167,7 @@
         score;
         end = Object.fromEntries(Config.end.map(({ name }) => [name, false]));
         ending_stuff = Array(Config.end.length).fill(false);
-        questionthing = Array(Config.questions.length).fill(false);
+
         scoring_stuff = Array(Config.scoring.length).fill({ amount: 0, points: 0 });
         misses = Object.fromEntries(Config.scoring.map((score: any) => [score.name, 0]));
         climb1 = false;
@@ -395,6 +395,7 @@
                         update_score(Config.redo);
                     }}>Redo</Button
                 ><br /><br />
+                
                 {#each Object.entries(score_names) as [name, subsets], i}
                     {#if subsets.length === 1}
                         <Button
@@ -404,9 +405,11 @@
                             >{name} {'('}{pretty(subsets[0].name)}{')'}</Button
                         >
                     {:else}
+
                         {#if name === 'Fuel'}
                             {#each subsets as subset}
                                 <Button
+                                
                                     onclick={score_score(subset.index)}
                                     disabled={once[game_state].has(Config.scoring[subset.index].name)}
                                     class={fuelbuttonclass}
@@ -414,7 +417,9 @@
                                     {name} {'('}{pretty(subset.name)}{')'}
                                 </Button>
                             {/each}
+                        <br /><br />
                         {:else}
+                            <br /><br />
                             <Button
                                 onclick={function (e) {
                                     e.target === this ? score_score(score_bindings[i]!)() : null;
@@ -424,6 +429,7 @@
                                         Config.scoring[score_bindings[i] ?? subsets[0].index].name
                                     )}
                             >
+                            
                                 {pretty(name)}
                                 {'('}<select
                                     bind:value={
@@ -435,30 +441,17 @@
                                     {#each subsets as { name, index }}
                                         <option class="bg-[#135fef]" value={index}>{name}</option>
                                     {/each}
-                                </select>{')'} Score
-                            </Button>
-                        {/if}
-                    {/if}
-                    <br /><br />
-                {/each}
-
-                <!-- {#each Object.entries(score_names) as [name, subsets]}
-                    
-                        <Button onclick={score_score(subsets[0].index)}
-                        class={fuelbuttonclass}>
-                        {pretty(name)} +1</Button>
-                        <Button onclick={score_score(subsets[1].index)}
-                        class={fuelbuttonclass}>{pretty(name)} +5</Button>
+                                </select>{')'}
+                        </Button>
                         
-            {/each} -->
-                <!-- {#if game_state === 'auto'}
-                <Button
-                    disabled={climb1}   
-                    onclick={score_score()}
-                    class={button_class}>Climb Level 1 (Auto)</Button
-                >
+                        {/if}
+                        {/if}
+                        {/each}
+                    <br /><br />
+
             
-            {/if} -->
+            
+           
                 {#if game_state === 'teleop'}
                     {#each ending_stuff, i}
                         <Button
@@ -471,11 +464,7 @@
                         {/if}
                     {/each}
                 {/if}
-                {#each questionthing, j}
-                    <Button disabled={questionthing[j]} class={button_class}
-                        >{uppercase(Config.questions[j].name)}</Button
-                    >
-                {/each}
+                
                 {#if game_state === 'post'}
                     <Button onclick={finish} class={button_class}><b>Next Game</b></Button>
                 {/if}

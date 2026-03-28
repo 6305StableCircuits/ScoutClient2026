@@ -124,7 +124,7 @@ export function get_average_score(matches: Match[]): Score {
         res.overall.push(score.overall);
         res.auto.score.push(score.auto.score);
         res.auto.climb1.push(score.auto.climb1);
-        for (let s of Config.scoring) {
+        for (let s of Config.scoring){
             res.auto[coerce<Record<string, any>>(s).name].amount.push(
                 score.auto[s.name as keyof InstanceType<(typeof Match)['Scoring']>['auto']].amount
             );

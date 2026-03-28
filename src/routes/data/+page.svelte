@@ -29,12 +29,13 @@
         'Match',
         'Overall', //total points
         'Auto', //points
-        'Climbed in Auto?',
-        // update & append stats according to names
+        'Trench',
         'Fuel +1',
         'Fuel +5',
         'Fuel +10',
+        'Fuel +15',
         'Fuel +20'
+        
     ];
     const teams = $derived<number[]>([...new Set(better_data.map(({ team }) => Number(team)))]);
     const teamstuff = $derived.by(() => {
@@ -141,6 +142,9 @@
                         >
                         <td style="color:{foreground};border: 1px solid {foreground}"
                             >{key.score['auto']['score']}</td
+                        >
+                        <td style="color:{foreground};border: 1px solid {foreground}"
+                            >{key.score['auto']['Trench']}</td
                         >
                         <td style="color:{foreground};border: 1px solid {foreground}"
                             >{key.score['teleop']['Fuel +1']['amount']}</td

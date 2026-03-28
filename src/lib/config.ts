@@ -10,25 +10,27 @@ let undone: Record<string, any>[] = [];
 let game_state = 'auto';
 let scoring: Config['scoring'][number]['name'][] = [];
 let end: Config['end'][number]['name'][] = [];
-let questions: Config['questions'][number][] = [];
 var config: Config = {
     reset() {
         actions = [];
         undone = [];
         game_state = 'auto';
+
         state = {
             assists,
             charged,
             points: 0,
+            activate: 0,
             climb1: false,
             end: Object.fromEntries(this.end.map(({ name }) => [name, false])),
-            questions: Object.fromEntries(this.questions.map(({ name }) => [name, false])),
+
             scoring: Object.fromEntries(
                 this.scoring.map(({ name }) => [
                     name,
                     {
                         amount: 0,
-                        points: 0
+                        points: 0,
+                        activate: 0
                     }
                 ])
             )
@@ -44,14 +46,16 @@ var config: Config = {
         return undone.length === 0;
     },
     undo() {
-        if (actions.length === 0) return state;
+        if (actions.length === 0) 
+            return state;
         const last_action = actions.pop();
         undone.push(last_action!);
         state = last_action!;
         return last_action!;
     },
     redo() {
-        if (undone.length === 0) return state;
+        if (undone.length === 0) 
+            return state;
         const last_undone = undone.pop();
         actions.push(last_undone!);
         state = last_undone!;
@@ -67,7 +71,8 @@ var config: Config = {
         {
             name: 'Fuel +1',
             auto: {
-                points: 1
+                points: 1,
+                activate: 0
             },
             get teleop() {
                 if (game_state === 'auto') {
@@ -76,6 +81,7 @@ var config: Config = {
                         state.scoring[score] = {
                             amount: 0,
                             points: 0
+ 
                         };
                     }
                 }
@@ -96,7 +102,8 @@ var config: Config = {
         {
             name: 'Fuel +5',
             auto: {
-                points: 5
+                points: 5,
+                activate: 0
             },
             get teleop() {
                 if (game_state === 'auto') {
@@ -125,7 +132,8 @@ var config: Config = {
         {
             name: 'Fuel +10',
             auto: {
-                points: 10
+                points: 10,
+                activate: 0
             },
             get teleop() {
                 if (game_state === 'auto') {
@@ -139,7 +147,7 @@ var config: Config = {
                 }
                 return {
                     get points() {
-                        return 10;
+                        return 5;
                     }
                 };
             },
@@ -154,7 +162,8 @@ var config: Config = {
         {
             name: 'Fuel +20',
             auto: {
-                points: 20
+                points: 20,
+                activate: 0
             },
             get teleop() {
                 if (game_state === 'auto') {
@@ -179,16 +188,55 @@ var config: Config = {
                 state.scoring['Fuel +20'].points += points;
                 return state;
             }
+        },    
+        {
+            name: 'Trench (Top)',
+            auto: {
+                points: 0,
+                activate: 1,
+                once: true
+            },
+            teleop: {
+                points: 0,
+                once: true
+            },
+            once: true,
+            score(points: number) {
+                actions.push(structuredClone(state));
+                state.points += points;
+                return state;
+            }
+        },
+        {
+            name: 'Trench (Bottom)',
+            auto: {
+                points: 0,
+                activate: 1,
+                once: true
+            },
+            teleop: {
+                points: 0,
+                once: true
+            },
+            once: true,
+            score(points: number) {
+                actions.push(structuredClone(state));
+                state.points += points;
+                return state;
+            }
         },
         {
             name: 'Climb (Level 1)',
             auto: {
-                points: 15
+                points: 15,
+                activate: 0,
+                once: true
             },
             teleop: {
-                points: 10
+                points: 10,
+                once: true
             },
-            once: 'per_phase',
+            once: true,
             score(points: number) {
                 actions.push(structuredClone(state));
                 state.points += points;
@@ -243,17 +291,7 @@ var config: Config = {
             return state;
         }
     },
-    questions: [
-        {
-            name: 'Defense',
-            toggle: 'False',
-        },
-        {
-            name: 'Offense',
-            toggle: 'False',
 
-        }
-    ],
 } as const satisfies Config;
 state = {
     assists,
@@ -262,13 +300,13 @@ state = {
     climb1: false,
     park: false,
     end: Object.fromEntries(config.end.map(({ name }) => [name, false])),
-    questions: Object.fromEntries(config.questions.map(({ name }) => [name, false])),
     scoring: Object.fromEntries(
         config.scoring.map(({ name }) => [
             name,
             {
                 amount: 0,
-                points: 0
+                points: 0,
+                activate: 0
             }
         ])
     )

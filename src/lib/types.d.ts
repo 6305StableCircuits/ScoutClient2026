@@ -13,13 +13,14 @@ export declare type Scoring = {
     auto?: {
         points: number;
         once?: boolean;
+        activate: number;
     };
     teleop?: {
         points: number;
         once?: boolean;
     };
     score: (points: number) => Record<string, any>;
-};
+}
 export declare type Score = {
     overall: number;
     auto: {
@@ -28,14 +29,19 @@ export declare type Score = {
         [x: typeof Config.scoring[number]['name']]: {
             amount: number;
             points: number;
+            activate: number;
+            
         }
         [x: typeof Config.primaryScore.name]: {
             amount: number;
             points: number;
+            activate: nunber;
+            
         };
         [x: typeof Config.secondaryScore.name]: {
             amount: number;
             points: number;
+            activate: number;
         };
     };
     teleop: {
@@ -43,6 +49,7 @@ export declare type Score = {
         [x: typeof Config.scoring[number]['name']]: {
             amount: number;
             points: number;
+            
         }
         [x: typeof Config.end[number]['name']]: boolean;
     };
@@ -94,7 +101,7 @@ export declare type Config = {
     readonly scoring: Scoring[];
     readonly end: Goal[];
     readonly park?: Goal;
-    readonly questions: qna[];
+
 
 };
 type Goal = {
@@ -108,11 +115,13 @@ type qna = {
     readonly toggle: string;
 
 };
+
 type Scoring = {
     readonly name: string;
     readonly once?: boolean | 'per_phase';
     readonly auto: {
         readonly points: number;
+        readonly activate: number;
     };
     readonly teleop: {
         readonly points: number;
